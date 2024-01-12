@@ -1,0 +1,152 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 700px;
+}
+
+.container input[type="text"],
+.container input[type="password"],
+.container select {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.container input[type="submit"] {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+.login-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form label {
+    margin-bottom: 5px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.login-form input[type="submit"] {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: #0056b3;
+}
+
+.flashes {
+    list-style-type: none;
+    padding: 0;
+}
+
+.flash-message {
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+
+/* Existing styles... */
+
+/* User Management Styles */
+.user-management-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.user-management-table th, .user-management-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.user-management-table th {
+    background-color: #f0f0f0;
+}
+
+.user-management-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Action Link Styles */
+.action-links a {
+    color: #0056b3;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.action-links a:hover {
+    text-decoration: underline;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-button {
+    padding: 5px 10px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #c9302c;
+}
+
+.add-user-form {
+    margin-top: 20px; /* Adjust as needed for spacing */
+    /* Other styles if needed */
+}
+

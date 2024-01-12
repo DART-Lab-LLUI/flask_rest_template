@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>User Management</h1>
+        <form action="{{ url_for('user_mng.logout') }}" method="get">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li class="flash-message">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <table class="user-management-table">
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Password</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>*****</td>
+                <td>{% for role in user.roles %}{{role.name}}, {% endfor %}</td>
+                <td class="action-links">
+                    <a href="{{ url_for('user_mng.delete_user', id=user.id) }}">Delete</a>
+                    <a href="{{ url_for('user_mng.set_password', id=user.id) }}">Reset</a>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <form method="POST" action="{{ url_for('user_mng.add_user') }}">
+                {{ form.hidden_tag() }}
+                <td>{{ form.username(id="username", class="form-control", size=20) }}</td>
+                <td>{{ form.password(id="password", class="form-control") }}</td>
+                <td>{{ form.roles(id="roles", class="form-control") }}</td>
+                <td>{{ form.submit(class="submit-button") }}</td>
+            </form>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+              <li class="flash-message">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <form class="login-form" method="POST">
+            {{ form.hidden_tag() }}
+            <label>{{ form.username.label }}</label>
+            {{ form.username(size=20) }}
+            <label>{{ form.password.label }}</label>
+            {{ form.password(size=20) }}
+            {{ form.submit }}
+        </form>
+    </div>
+</body>
+</html>
