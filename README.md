@@ -55,6 +55,10 @@ Start the application with
 flask --app server run --debug
 ```
 
+After successful starting of the server you have to initialize the database.
+Use your broswer and request http://localhost:5000/init
+The rest will handle flask.
+
 ## Using authorization
 
 Enforce login for a RESTFUL request can be achieved with @jwt_required() decorator.
