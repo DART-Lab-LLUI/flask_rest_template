@@ -10,43 +10,48 @@ It implements following features:
 - Template user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
 - Simple client example to login and retrieve data from RESTFUL service
 
-## Source Structure
+
+## Folder Structure
 
 ```
-server
-|   config.py         # Flask environment config storage
-|   extensions.py     # Globally accessable extension objects
-|   __init__.py       # Flask Factory (create_flask function)
+flask_rest_template
+|   .flaskenv             # Environment variables
+|   requirements.txt      # Libraries
 |
-+---auth              # Contains all files for JWT login
-|     decorator.py    # JWT role checker
-|     routes.py
-|     __init__.py     # Contains blueprint for auth
-|
-+---main              # Contains tempolate application routs
-|     appointment_routes.py
-|     measure_routes.py
-|     patient_routes.py
-|     __init__.py     # Contains blueprint for main
-|
-+---models            # Stores all flask-sqlalchemy models
-|     auth.py         # User Model for user-management & RESTFUL JWT Autehtification
-|     main.py         # Models for main application
-|     utils.py        # Helpful utils the easy RESTFUL develompment
-|     __init__.py
-|
-+---static            # Static files for Webpage
-|     style.css
-|
-+---templates         # Flask html templates. Contains Pages for user-management
-|     login.html      
-|     set_password.html
-|     user_management.html
-|
-+---user_mng          # Contains routes and decorators for user-management page
-      decorator.py    
-      routes.py
-      __init__.py
++---server
+    |   config.py         # Flask environment config loader
+    |   extensions.py     # Globally accessable extension objects
+    |   __init__.py       # Flask Factory (create_flask function)
+    |
+    +---auth              # Contains all files for JWT login
+    |     decorator.py    # JWT role checker
+    |     routes.py
+    |     __init__.py     # Contains blueprint for auth
+    |
+    +---main              # Contains tempolate application routs
+    |     appointment_routes.py
+    |     measure_routes.py
+    |     patient_routes.py
+    |     __init__.py     # Contains blueprint for main
+    |
+    +---models            # Stores all flask-sqlalchemy models
+    |     auth.py         # User Model for user-management & RESTFUL JWT Autehtification
+    |     main.py         # Models for main application
+    |     utils.py        # Helpful utils the easy RESTFUL develompment
+    |     __init__.py
+    |
+    +---static            # Static files for Webpage
+    |     style.css
+    |
+    +---templates         # Flask html templates. Contains Pages for user-management
+    |     login.html      
+    |     set_password.html
+    |     user_management.html
+    |
+    +---user_mng          # Contains routes and decorators for user-management page
+          decorator.py    
+          routes.py
+          __init__.py
 ```
 
 ## Usage

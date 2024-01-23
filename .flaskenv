@@ -1,3 +1,4 @@
+# Define name of python module to start
 FLASK_APP=server
 
 # change for production
@@ -7,7 +8,6 @@ FLASK_DEBUG=True
 # Define Secrets unique to your application (best to generate each)
 SECRET_KEY=superAmazingSecretKey
 JWT_SECRET_KEY=superAmazingJWTSecretKey
-SALT=superAmazingSalt
 
 # How long an authorization is valid (in minutes)
 JWT_ACCESS_TOKEN_EXPIRES=0.1
