@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 
 from server.config import Config
-from server.extensions import db
+import server.extensions as extensions
 from server.models.auth import Role, User
 
 
@@ -15,10 +15,10 @@ def create_app(config_class=Config) -> Flask:
     app.config.from_object(config_class)
 
     # Initialize Flask extensions
-    db.init_app(app)
-    login_manager = LoginManager(app)  # flask-login extension for user-management authentication
-    login_manager.login_view = 'user_mng.login'
-    JWTManager(app)  # flask-jwt-extended extension for REST authentication
+    extensions.db.init_app(app)
+    extensions.login_manager = LoginManager(app)  # flask-login extension for user-management authentication
+    extensions.login_manager .login_view = 'user_mng.login'
+    extensions.jwt = JWTManager(app)  # flask-jwt-extended extension for REST authentication
 
     # Register blueprints for different modules
     # user-management web page
@@ -31,23 +31,18 @@ def create_app(config_class=Config) -> Flask:
     from server.main import bp as main_bp
     app.register_blueprint(main_bp, url_prefix='/api')
 
-    # This function is needed for flask-login to retrieve a user after login
-    @login_manager.user_loader
-    def load_user(user_id):
-        print(user_id)
-        return User.query.get(int(user_id))
 
     # simple request to install database
     @app.route('/init')
     def init_database():
         # Create Database
-        db.create_all()
+        extensions.db.create_all()
 
         # Add initial user data
         admin_role = Role(name='admin')
         user_role = Role(name='user')
-        db.session.add(admin_role)
-        db.session.add(user_role)
+        extensions.db.session.add(admin_role)
+        extensions.db.session.add(user_role)
 
         admin = User(username='admin', password='1234')
         admin.roles.append(admin_role)
@@ -56,11 +51,11 @@ def create_app(config_class=Config) -> Flask:
         both = User(username='both', password='1234')
         both.roles.append(admin_role)
         both.roles.append(user_role)
-        db.session.add(admin)
-        db.session.add(user)
-        db.session.add(both)
+        extensions.db.session.add(admin)
+        extensions.db.session.add(user)
+        extensions.db.session.add(both)
 
-        db.session.commit()
+        extensions.db.session.commit()
 
         return jsonify({"message": "Database initialized"})
 

@@ -1,14 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, EqualTo
 
+from server.extensions import db, login_manager
 from server.models.auth import Role, User
 from server.user_mng import bp
 from server.user_mng.decorator import role_required_web
-from server.extensions import db
 
 
 class LoginForm(FlaskForm):
@@ -116,3 +116,9 @@ def logout():
     logout_user()
     flash('You have been logged-out')
     return redirect(url_for('user_mng.login'))
+
+
+# This function is needed for flask-login to retrieve a user after login
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

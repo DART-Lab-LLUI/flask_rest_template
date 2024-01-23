@@ -8,6 +8,24 @@ user_role = db.Table('user_role',
                      db.Column('user_id', db.Integer, db.ForeignKey('user.id')))
 
 
+class AccessToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    refresh_token_id = db.Column(db.Integer,
+                                 db.ForeignKey('refresh_token.id'),
+                                 nullable=False)
+
+
+class RefreshToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    blocked = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    expire_date = db.Column(db.DateTime, nullable=False)
+    user = db.relationship('User', backref='refresh_tokens')
+    access_tokens = db.relationship('AccessToken', backref='refresh_token', cascade="all, delete-orphan")
+
+
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)

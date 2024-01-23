@@ -3,6 +3,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+jwt = None
+login_manager = None
 
 
 def parse_date(date_str: str) -> datetime:
