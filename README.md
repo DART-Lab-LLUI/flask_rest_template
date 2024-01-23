@@ -1,6 +1,8 @@
-# Flask RESTFUL template 
-This template provides a setup to easily develop RESTFUL servers. 
+# Flask RESTFUL template
+
+This template provides a setup to easily develop RESTFUL servers.
 It implements following features:
+
 - Webbased user management http://localhost:5000/ (https://flask-login.readthedocs.io/en/latest/)
 - JWT based authorization for RESTFUL requests (https://flask-jwt-extended.readthedocs.io)
 - Role-based access restrictions for REST and WEB with decorators
@@ -8,11 +10,12 @@ It implements following features:
 - Template user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
 - Simple client example to login and retrieve data from RESTFUL service
 
-## Folder Structure
+## Source Structure
+
 ```
 server
 |   config.py         # Flask environment config storage
-|   extension.py      # Globally accessable extension objects
+|   extensions.py     # Globally accessable extension objects
 |   __init__.py       # Flask Factory (create_flask function)
 |
 +---auth              # Contains all files for JWT login
@@ -45,14 +48,19 @@ server
       routes.py
       __init__.py
 ```
+
 ## Usage
+
 Install requirements
+
 ```shell
 pip install -r requirements.txt
 ```
-Start the application with 
+
+Start the application with
+
 ```shell
-flask --app server run --debug
+flask run
 ```
 
 After successful starting of the server you have to initialize the database.
@@ -70,6 +78,7 @@ from flask_jwt_extended import jwt_required
 from server.models.main import Patient
 from server.main import bp
 
+
 @jwt_required()
 @bp.route('/appointment/<int:appointment_id>', methods=['GET'])
 def get_patient_by_id(patient_id):
@@ -78,39 +87,74 @@ def get_patient_by_id(patient_id):
 ````
 
 The client has to login first with valid credentials.
+
 ````python
 import requests
 
 response = requests.post(
-    'http://localhost:5000/api/auth/',
+    'http://localhost:5000/api/auth/login',
     headers={"Content-Type": "application/json"},
     json={"username": "both", "password": "1234"}
 )
 ````
-After successfull login you will receive a token which is valid for certain time period.
+
+After successful login you will receive an access_token and a request_token which are valid for the configurated time
+period.
+
 ````python
-{'access_token': 'eyJhbGciOiJIUzI1NiIsInR5'}
+{'access_token': 'eyJhbGciOiJIUzI1NiIsInR5', 'refresh_token': 'erasdgafg'}
 ````
-This token needs to be added in the header of every restricted request, to authorize the request.
+
+The access_token needs to be added in the header of every restricted request, to authorize the request.
+
 ````python
 import requests
 
-response = requests.get(
-    'http://localhost:5000/api/patient/',
-    headers={"Authorization": "Bearer " + json_response["access_token"], 
-             "Content-Type": "application/json"}
-)
+response = requests.get('http://localhost:5000/api/patient/',
+                        headers={"Authorization": "Bearer " + access_token,
+                                 "Content-Type": "application/json"})
 ````
 
-Please note the dictionary key has to be "Authorized" and the toke has to be prefixed with "Bearer "
+Please note the dictionary key has to be "Authorized" and the toke has to be prefixed with "Bearer ".
 
+If the access_token is expired you will receive the status code 401 and following response.
+````python 
+{'msg': 'Token has expired'}
+````
+
+You can than refresh the authorization and receive a new access_token which will again be valid in the configured
+time-period.
+````python
+import requests
+
+response = requests.get('http://localhost:5000/api/auth/refresh',
+                        headers={"Authorization": "Bearer " + refresh_token, 
+                                 "Content-Type": "application/json"})
+````
+
+If the refresh_token is expired you will once again receive a message and have to login
+````python 
+{'msg': 'Token has expired'}
+````
+
+After business is done you can logout using the refresh_token
+````python
+import requests
+
+response = requests.delete('http://localhost:5000/api/auth/logout',
+                        headers={"Authorization": "Bearer " + refresh_token, 
+                                 "Content-Type": "application/json"})
+````
 ## Using roles
+
 With the decorator @role_required("role_name") requests can be restricted to roles of the user
+
 ````python
 from flask_jwt_extended import jwt_required
 from server.models.main import Patient
 from server.main import bp
 from server.auth.decorator import role_required
+
 
 @jwt_required()
 @role_required("user")
