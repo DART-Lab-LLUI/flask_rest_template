@@ -12,6 +12,7 @@ def create_app() -> Flask:
 
     # Initialize local configs in environment
     app.config.from_object(Config)
+
     # Initialize Flask extensions
     extensions.db.init_app(app)
     extensions.login_manager = LoginManager(app)  # flask-login extension for user-management authentication
@@ -34,25 +35,27 @@ def create_app() -> Flask:
     def init_database():
         # Create Database
         extensions.db.create_all()
+        try:
+            # Add initial user data
+            admin_role = Role(name='admin')
+            user_role = Role(name='user')
+            extensions.db.session.add(admin_role)
+            extensions.db.session.add(user_role)
 
-        # Add initial user data
-        admin_role = Role(name='admin')
-        user_role = Role(name='user')
-        extensions.db.session.add(admin_role)
-        extensions.db.session.add(user_role)
+            admin = User(username='admin', password='1234')
+            admin.roles.append(admin_role)
+            user = User(username='user', password='1234')
+            user.roles.append(user_role)
+            both = User(username='both', password='1234')
+            both.roles.append(admin_role)
+            both.roles.append(user_role)
+            extensions.db.session.add(admin)
+            extensions.db.session.add(user)
+            extensions.db.session.add(both)
 
-        admin = User(username='admin', password='1234')
-        admin.roles.append(admin_role)
-        user = User(username='user', password='1234')
-        user.roles.append(user_role)
-        both = User(username='both', password='1234')
-        both.roles.append(admin_role)
-        both.roles.append(user_role)
-        extensions.db.session.add(admin)
-        extensions.db.session.add(user)
-        extensions.db.session.add(both)
-
-        extensions.db.session.commit()
+            extensions.db.session.commit()
+        except Exception as e:
+            extensions.db.session.rollback()
 
         return jsonify({"message": "Database initialized"})
 

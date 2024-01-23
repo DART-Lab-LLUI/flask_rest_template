@@ -1,6 +1,7 @@
 from sqlalchemy import event
 
-from server.extensions import format_timestamp, parse_timestamp, format_date, parse_date, db
+from server.extensions import db
+from server.utils import parse_date, format_date, parse_timestamp, format_timestamp
 
 
 class Category(db.Model):
