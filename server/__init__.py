@@ -2,22 +2,20 @@ from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 
-from server.config import Config
 import server.extensions as extensions
+from server.config import Config
 from server.models.auth import Role, User
 
 
-def create_app(config_class=Config) -> Flask:
+def create_app() -> Flask:
     app = Flask(__name__)
 
     # Initialize local configs in environment
-
-    app.config.from_object(config_class)
-
+    app.config.from_object(Config)
     # Initialize Flask extensions
     extensions.db.init_app(app)
     extensions.login_manager = LoginManager(app)  # flask-login extension for user-management authentication
-    extensions.login_manager .login_view = 'user_mng.login'
+    extensions.login_manager.login_view = 'user_mng.login'
     extensions.jwt = JWTManager(app)  # flask-jwt-extended extension for REST authentication
 
     # Register blueprints for different modules
@@ -30,7 +28,6 @@ def create_app(config_class=Config) -> Flask:
     # patient apis
     from server.main import bp as main_bp
     app.register_blueprint(main_bp, url_prefix='/api')
-
 
     # simple request to install database
     @app.route('/init')
