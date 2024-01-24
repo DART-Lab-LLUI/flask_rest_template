@@ -10,7 +10,7 @@ from server.main import bp
 
 @bp.route('/measure/', methods=['GET'])
 @jwt_required()
-@role_required("user")
+@role_required(["user"])
 def get_all_measures():
     measures = Measure.query.all()
     return jsonify([measure.to_dict() for measure in measures])
@@ -18,7 +18,7 @@ def get_all_measures():
 
 @bp.route('/measure/<int:measure_id>', methods=['GET'])
 @jwt_required()
-@role_required("user")
+@role_required(["user"])
 def get_measure_by_id(measure_id):
     measure = Measure.query.get_or_404(measure_id)
     return measure.to_dict()
@@ -26,7 +26,7 @@ def get_measure_by_id(measure_id):
 
 @bp.route('/measure/', methods=['PUT'])
 @jwt_required()
-@role_required("user")
+@role_required(["user"])
 def add_measure():
     data = request.get_json()
     new_measure = Measure(**data)
@@ -37,7 +37,7 @@ def add_measure():
 
 @bp.route('/measure/<int:measure_id>', methods=['DELETE'])
 @jwt_required()
-@role_required("user")
+@role_required(["user"])
 def delete_measure(measure_id):
     measure = Measure.query.get_or_404(measure_id)
     db.session.delete(measure)

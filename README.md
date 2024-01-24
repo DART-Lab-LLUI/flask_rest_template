@@ -162,7 +162,7 @@ from server.auth.decorator import role_required
 
 
 @jwt_required()
-@role_required("user")
+@role_required(["user"])
 @bp.route('/appointment/<int:appointment_id>', methods=['GET'])
 def get_patient_by_id(patient_id):
     patient = Patient.query.get_or_404(patient_id)
