@@ -7,7 +7,7 @@ It implements following features:
 - JWT based authorization for RESTFUL requests (https://flask-jwt-extended.readthedocs.io)
 - Role-based access restrictions for REST and WEB with decorators
 - Database migration (https://flask-migrate.readthedocs.io/en/latest/#)
-- Schedules (https://viniciuschiele.github.io/flask-apscheduler/)
+- Schedules (https://github.com/furqonat/flask-scheduler)
 - Template application for Patient-Measurement data
 - Template user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
 - Simple client example to login and retrieve data from RESTFUL service
