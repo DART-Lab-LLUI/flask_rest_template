@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime
 
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, decode_token, \
@@ -13,7 +14,6 @@ from server.models.auth import User, RefreshToken, AccessToken
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     jti = jwt_payload["jti"]
     jwt_type = jwt_payload["type"]
-    print(jwt_payload)
     refresh_token = None
     if jwt_type == "access":
         refresh_token = AccessToken.query.filter_by(jti=jti).first().refresh_token
@@ -30,7 +30,7 @@ def _create_refresh_token(user: User) -> [str, RefreshToken]:
     refresh_token_dbo = RefreshToken(jti=decoded['jti'],
                                      blocked=False,
                                      user_id=user.id,
-                                     expire_date=datetime.datetime.fromtimestamp(decoded['exp']))
+                                     expire_date=datetime.fromtimestamp(decoded['exp']))
 
     db.session.add(refresh_token_dbo)
     db.session.commit()
@@ -41,7 +41,8 @@ def _create_access_token(refresh_token: RefreshToken) -> str:
     access_token = create_access_token(identity=refresh_token.user_id)
     decoded = decode_token(access_token)
     access_token_dbo = AccessToken(jti=decoded['jti'],
-                                   refresh_token=refresh_token)
+                                   refresh_token=refresh_token,
+                                   expire_date=datetime.fromtimestamp(decoded['exp']))
 
     db.session.add(access_token_dbo)
     db.session.commit()
@@ -75,7 +76,6 @@ def refresh():
 @jwt_required(refresh=True)
 def logout():
     jti = get_jwt()["jti"]
-    print(get_jwt())
     refresh_token = RefreshToken.query.filter_by(jti=jti).first()
     refresh_token.blocked = True
     db.session.commit()

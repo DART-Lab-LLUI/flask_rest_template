@@ -11,6 +11,7 @@ user_role = db.Table('user_role',
 class AccessToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
+    expire_date = db.Column(db.DateTime, nullable=False)
     refresh_token_id = db.Column(db.Integer,
                                  db.ForeignKey('refresh_token.id'),
                                  nullable=False)

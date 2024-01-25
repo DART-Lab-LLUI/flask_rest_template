@@ -1,10 +1,13 @@
+from datetime import datetime
+
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flask_scheduler import Scheduler
 
 import server.extensions as extensions
 from server.config import Config
-from server.models.auth import Role, User
+from server.models.auth import Role, User, RefreshToken, AccessToken
 
 
 def create_app() -> Flask:
@@ -12,12 +15,14 @@ def create_app() -> Flask:
 
     # Initialize local configs in environment
     app.config.from_object(Config)
-
+    app.config['SCHEDULER_API_INTERVAL'] = 5  # in seconds
     # Initialize Flask extensions
     extensions.db.init_app(app)
     extensions.login_manager = LoginManager(app)  # flask-login extension for user-management authentication
     extensions.login_manager.login_view = 'user_mng.login'
-    extensions.jwt = JWTManager(app)  # flask-jwt-extended extension for REST authentication
+    extensions.jwt = JWTManager(app)
+    extensions.scheduler = Scheduler(app)
+    # flask-jwt-extended extension for REST authentication
 
     # Register blueprints for different modules
     # user-management web page
@@ -58,6 +63,18 @@ def create_app() -> Flask:
             extensions.db.session.rollback()
 
         return jsonify({"message": "Database initialized"})
+
+    @extensions.scheduler.runner()
+    def clear_expired_tokens():
+        with app.app_context():
+            expired_tokens = RefreshToken.query.filter(RefreshToken.expire_date < datetime.utcnow()).all()
+            expired_tokens += AccessToken.query.filter(AccessToken.expire_date < datetime.utcnow()).all()
+            print(len(expired_tokens))
+            for expired_token in expired_tokens:
+                extensions.db.session.delete(expired_token)
+
+            extensions.db.session.commit()
+            print('This job is executed every 10 seconds.')
 
     return app
 
