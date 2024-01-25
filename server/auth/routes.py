@@ -20,7 +20,6 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     elif jwt_type == "refresh":
         refresh_token = RefreshToken.query.filter_by(jti=jti).first()
 
-    print(refresh_token.blocked)
     return refresh_token is None or refresh_token.blocked
 
 

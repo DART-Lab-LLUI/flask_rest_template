@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_scheduler import Scheduler
 
 import server.extensions as extensions
@@ -18,6 +19,7 @@ def create_app() -> Flask:
     app.config['SCHEDULER_API_INTERVAL'] = 5  # in seconds
     # Initialize Flask extensions
     extensions.db.init_app(app)
+    extensions.migration = Migrate(app, extensions.db)
     extensions.login_manager = LoginManager(app)  # flask-login extension for user-management authentication
     extensions.login_manager.login_view = 'user_mng.login'
     extensions.jwt = JWTManager(app)
@@ -69,12 +71,10 @@ def create_app() -> Flask:
         with app.app_context():
             expired_tokens = RefreshToken.query.filter(RefreshToken.expire_date < datetime.utcnow()).all()
             expired_tokens += AccessToken.query.filter(AccessToken.expire_date < datetime.utcnow()).all()
-            print(len(expired_tokens))
             for expired_token in expired_tokens:
                 extensions.db.session.delete(expired_token)
 
             extensions.db.session.commit()
-            print('This job is executed every 10 seconds.')
 
     return app
 

@@ -12,7 +12,7 @@ def role_required(roles: List):
         def decorated_function(*args, **kwargs):
             current_user = get_jwt_identity()
             user = User.query.get(current_user)
-            if any(role in user.roles for role in roles):
+            if not user.roles or any(role in user.roles for role in roles):
                 abort(403)
             return f(*args, **kwargs)
 

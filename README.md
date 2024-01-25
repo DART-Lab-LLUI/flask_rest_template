@@ -3,9 +3,11 @@
 This template provides a setup to easily develop RESTFUL servers.
 It implements following features:
 
-- Webbased user management http://localhost:5000/ (https://flask-login.readthedocs.io/en/latest/)
+- Web based user management http://localhost:5000/ (https://flask-login.readthedocs.io/en/latest/)
 - JWT based authorization for RESTFUL requests (https://flask-jwt-extended.readthedocs.io)
 - Role-based access restrictions for REST and WEB with decorators
+- Database migration (https://flask-migrate.readthedocs.io/en/latest/#)
+- Schedules (https://viniciuschiele.github.io/flask-apscheduler/)
 - Template application for Patient-Measurement data
 - Template user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
 - Simple client example to login and retrieve data from RESTFUL service
@@ -59,7 +61,10 @@ flask_rest_template
 Install requirements
 
 ```shell
-pip install -r requirements.txt
+# Install libraries
+$ pip install -r requirements.txt
+# Install database
+$ flask db ugrade
 ```
 
 Start the application with
