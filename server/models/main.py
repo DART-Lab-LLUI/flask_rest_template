@@ -1,7 +1,7 @@
 from sqlalchemy import event
 
 from server.extensions import db
-from server.utils import parse_date, format_date, parse_timestamp, format_timestamp
+from server.utils import parse_timestamp, format_timestamp
 
 
 class Category(db.Model):
@@ -18,7 +18,7 @@ class Measure(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marker = db.Column(db.String(68))
     value = db.Column(db.Float)
-    _timestamp = db.Column(db.DateTime)
+    _timestamp = db.Column(db.Float)
     appointment_id = db.Column(db.Integer, db.ForeignKey('appointment.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
@@ -43,16 +43,16 @@ class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
-    _date = db.Column(db.Date)
+    _date = db.Column(db.Double)
     measures = db.relationship('Measure', backref='appointment')
 
     @property
     def date(self):
-        return format_date(self._date)
+        return format_timestamp(self._date)
 
     @date.setter
     def date(self, date_str):
-        self._date = parse_date(date_str)
+        self._date = parse_timestamp(date_str)
 
     def to_dict(self) -> dict:
         return {"id": self.id,
@@ -65,17 +65,17 @@ class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(68))
     surname = db.Column(db.String(68))
-    _birthday = db.Column(db.Date)
+    _birthday = db.Column(db.Double)
     comments = db.Column(db.Text)
     appointments = db.relationship('Appointment', backref='patient')
 
     @property
     def birthday(self):
-        return format_date(self._birthday)
+        return format_timestamp(self._birthday)
 
     @birthday.setter
     def birthday(self, date_str: str):
-        self._birthday = parse_date(date_str)
+        self._birthday = parse_timestamp(date_str)
 
     def __repr__(self):
         return f'<Patient "{self.id}">'

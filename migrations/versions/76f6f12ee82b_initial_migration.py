@@ -1,8 +1,8 @@
 """Initial migration.
 
-Revision ID: 92b5b5e67fb2
+Revision ID: 76f6f12ee82b
 Revises: 
-Create Date: 2024-01-25 15:14:49.827738
+Create Date: 2024-01-26 08:34:41.811045
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from werkzeug.security import generate_password_hash
 
 # revision identifiers, used by Alembic.
-revision = '92b5b5e67fb2'
+revision = '76f6f12ee82b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,7 +36,7 @@ def upgrade():
     sa.Column('jti', sa.String(length=36), nullable=False),
     sa.Column('blocked', sa.Boolean(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('expire_date', sa.DateTime(), nullable=False),
+    sa.Column('expire_date', sa.Double(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -52,8 +52,8 @@ def upgrade():
     op.create_table('access_token',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('jti', sa.String(length=36), nullable=False),
-    sa.Column('expire_date', sa.DateTime(), nullable=False),
-    sa.Column('refresh_token_id', sa.Integer(), nullable=False),
+    sa.Column('expire_date', sa.Double(), nullable=False),
+    sa.Column('refresh_token_id', sa.Double(), nullable=False),
     sa.ForeignKeyConstraint(['refresh_token_id'], ['refresh_token.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -61,7 +61,6 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_access_token_jti'), ['jti'], unique=False)
 
     # ### end Alembic commands ###
-
     # ### Init data
     # #### Auth
     bulk_roles = [{"id": 1, "name": "admin"}, {"id": 2, "name": "user"}]

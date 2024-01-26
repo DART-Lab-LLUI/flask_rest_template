@@ -16,7 +16,6 @@ def create_app() -> Flask:
 
     # Initialize local configs in environment
     app.config.from_object(Config)
-    app.config['SCHEDULER_API_INTERVAL'] = 5  # in seconds
     # Initialize Flask extensions
     extensions.db.init_app(app)
     extensions.migration = Migrate(app, extensions.db)
@@ -37,40 +36,12 @@ def create_app() -> Flask:
     from server.main import bp as main_bp
     app.register_blueprint(main_bp, url_prefix='/api')
 
-    # simple request to install database
-    @app.route('/init')
-    def init_database():
-        # Create Database
-        extensions.db.create_all()
-        try:
-            # Add initial user data
-            admin_role = Role(name='admin')
-            user_role = Role(name='user')
-            extensions.db.session.add(admin_role)
-            extensions.db.session.add(user_role)
-
-            admin = User(username='admin', password='1234')
-            admin.roles.append(admin_role)
-            user = User(username='user', password='1234')
-            user.roles.append(user_role)
-            both = User(username='both', password='1234')
-            both.roles.append(admin_role)
-            both.roles.append(user_role)
-            extensions.db.session.add(admin)
-            extensions.db.session.add(user)
-            extensions.db.session.add(both)
-
-            extensions.db.session.commit()
-        except Exception as e:
-            extensions.db.session.rollback()
-
-        return jsonify({"message": "Database initialized"})
-
+    # Schedule delete tokens
     @extensions.scheduler.runner()
     def clear_expired_tokens():
         with app.app_context():
-            expired_tokens = RefreshToken.query.filter(RefreshToken.expire_date < datetime.utcnow()).all()
-            expired_tokens += AccessToken.query.filter(AccessToken.expire_date < datetime.utcnow()).all()
+            expired_tokens = RefreshToken.query.filter(RefreshToken.expire_date < datetime.utcnow().timestamp()).all()
+            expired_tokens += AccessToken.query.filter(AccessToken.expire_date < datetime.utcnow().timestamp()).all()
             for expired_token in expired_tokens:
                 extensions.db.session.delete(expired_token)
 

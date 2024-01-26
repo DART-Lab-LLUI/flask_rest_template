@@ -1,18 +1,20 @@
 """Adding main module
 
-Revision ID: 4db97518eddf
-Revises: 92b5b5e67fb2
-Create Date: 2024-01-25 15:17:36.382679
+Revision ID: 096e36d1f1ab
+Revises: 76f6f12ee82b
+Create Date: 2024-01-26 08:36:55.501088
 
 """
+from datetime import datetime
+
+import pytz
 from alembic import op
 import sqlalchemy as sa
 
-from server import utils
 
 # revision identifiers, used by Alembic.
-revision = '4db97518eddf'
-down_revision = '92b5b5e67fb2'
+revision = '096e36d1f1ab'
+down_revision = '76f6f12ee82b'
 branch_labels = None
 depends_on = None
 
@@ -28,14 +30,14 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=68), nullable=True),
     sa.Column('surname', sa.String(length=68), nullable=True),
-    sa.Column('_birthday', sa.Date(), nullable=True),
+    sa.Column('_birthday', sa.Double(), nullable=True),
     sa.Column('comments', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     appointment_table = op.create_table('appointment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('patient_id', sa.Integer(), nullable=False),
-    sa.Column('_date', sa.Date(), nullable=True),
+    sa.Column('_date', sa.Double(), nullable=True),
     sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -43,7 +45,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('marker', sa.String(length=68), nullable=True),
     sa.Column('value', sa.Float(), nullable=True),
-    sa.Column('_timestamp', sa.DateTime(), nullable=True),
+    sa.Column('_timestamp', sa.Double(), nullable=True),
     sa.Column('appointment_id', sa.Integer(), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['appointment_id'], ['appointment.id'], ),
@@ -51,21 +53,33 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
-
     # #### Main
     bulk_categories = [{"id": 1, "name": "HR"}, {"id": 2, "name": "Boold Pressure"}]
     op.bulk_insert(category_table, bulk_categories)
 
-    bulk_patient = [{"id": 1, "name": "Luca", "surname": "Nastasi", "birthday": utils.parse_date("28.07.1997")}]
+    bulk_patient = [{"id": 1,
+                     "name": "Luca",
+                     "surname": "Nastasi",
+                     "_birthday": datetime(1997, 7, 28).timestamp()}]
     op.bulk_insert(patient_table, bulk_patient)
 
-    bulk_appointment = [{"id": 1, "date": utils.parse_date("1.1.2024"), "patient_id": 1}]
+    bulk_appointment = [{"id": 1,
+                         "_date": datetime(2024, 1, 1).timestamp(),
+                         "patient_id": 1}]
     op.bulk_insert(appointment_table, bulk_appointment)
 
-    bulk_measure = [{"id": 1, "timestamp": utils.parse_timestamp("1.1.2024 11:00:00.112"),
-                     "category_id": 1, "appointment_id": 1},
-                    {"id": 2, "timestamp": utils.parse_timestamp("1.1.2024 11:00:01.112"),
-                     "category_id": 1, "appointment_id": 1}
+    bulk_measure = [{"id": 1,
+                     "_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
+                     "category_id": 1,
+                     "appointment_id": 1,
+                     "Marker": "HR",
+                     "value": 59},
+                    {"id": 2,
+                     "_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
+                     "category_id": 1,
+                     "appointment_id": 1,
+                     "Marker": "HR",
+                     "value": 66}
                     ]
     op.bulk_insert(measure_table, bulk_measure)
 

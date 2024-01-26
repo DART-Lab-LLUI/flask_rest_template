@@ -15,7 +15,7 @@ JWT_ACCESS_TOKEN_EXPIRES=0.1
 JWT_REFRESH_TOKEN_EXPIRES=30
 
 # Standard delay for job schedules (in seconds)
-SCHEDULER_API_INTERVAL=1*24*60*60 # everday once
+SCHEDULER_API_INTERVAL=60 # ever minute
 
 # Database uri
 SQLALCHEMY_DATABASE_URI=sqlite:///app.db

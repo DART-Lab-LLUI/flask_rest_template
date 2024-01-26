@@ -29,7 +29,7 @@ def _create_refresh_token(user: User) -> [str, RefreshToken]:
     refresh_token_dbo = RefreshToken(jti=decoded['jti'],
                                      blocked=False,
                                      user_id=user.id,
-                                     expire_date=datetime.fromtimestamp(decoded['exp']))
+                                     expire_date=datetime.fromtimestamp(decoded['exp']).timestamp())
 
     db.session.add(refresh_token_dbo)
     db.session.commit()
@@ -41,7 +41,7 @@ def _create_access_token(refresh_token: RefreshToken) -> str:
     decoded = decode_token(access_token)
     access_token_dbo = AccessToken(jti=decoded['jti'],
                                    refresh_token=refresh_token,
-                                   expire_date=datetime.fromtimestamp(decoded['exp']))
+                                   expire_date=datetime.fromtimestamp(decoded['exp']).timestamp())
 
     db.session.add(access_token_dbo)
     db.session.commit()
