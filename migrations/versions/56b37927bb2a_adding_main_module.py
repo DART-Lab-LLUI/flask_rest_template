@@ -1,20 +1,19 @@
 """Adding main module
 
-Revision ID: 096e36d1f1ab
-Revises: 76f6f12ee82b
-Create Date: 2024-01-26 08:36:55.501088
+Revision ID: 56b37927bb2a
+Revises: fa3b11eec515
+Create Date: 2024-01-26 13:30:17.429715
 
 """
 from datetime import datetime
 
-import pytz
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '096e36d1f1ab'
-down_revision = '76f6f12ee82b'
+revision = '56b37927bb2a'
+down_revision = 'fa3b11eec515'
 branch_labels = None
 depends_on = None
 
@@ -45,7 +44,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('marker', sa.String(length=68), nullable=True),
     sa.Column('value', sa.Float(), nullable=True),
-    sa.Column('_timestamp', sa.Double(), nullable=True),
+    sa.Column('_timestamp', sa.Float(), nullable=True),
     sa.Column('appointment_id', sa.Integer(), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['appointment_id'], ['appointment.id'], ),

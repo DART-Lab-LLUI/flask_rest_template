@@ -23,7 +23,7 @@ def _send_request(method, url: str, **kwargs) -> [requests.Response, str]:
     print(f"{response.status_code}: {response.json()}")
     print()
     if response.status_code == 401 and response.json().get("msg") == "Token has expired":
-        response, access_token = _send_request(requests.get, "/auth/", refresh_token=refresh_token)
+        response, access_token = _send_request(requests.get, "auth/", refresh_token=refresh_token)
         access_token = response.json().get("access_token")
         kwargs["access_token"] = access_token
         _send_request(method, url, **kwargs)
@@ -61,7 +61,7 @@ def refresh_login(refresh_token: str) -> str:
 
 
 def get_patients(access_token: str, refresh_token: str) -> [dict, str]:
-    response, access_token = _send_request(requests.get, "/patient/",
+    response, access_token = _send_request(requests.get, "patient/",
                                            access_token=access_token,
                                            refresh_token=refresh_token)
 

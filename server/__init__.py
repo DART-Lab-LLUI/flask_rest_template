@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, jsonify
+from flask import Flask, has_request_context, request
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -9,6 +9,8 @@ from flask_scheduler import Scheduler
 import server.extensions as extensions
 from server.config import Config
 from server.models.auth import Role, User, RefreshToken, AccessToken
+from server.models.log import AccessLog
+from server.utils import get_current_user
 
 
 def create_app() -> Flask:
@@ -16,6 +18,7 @@ def create_app() -> Flask:
 
     # Initialize local configs in environment
     app.config.from_object(Config)
+
     # Initialize Flask extensions
     extensions.db.init_app(app)
     extensions.migration = Migrate(app, extensions.db)
@@ -46,6 +49,26 @@ def create_app() -> Flask:
                 extensions.db.session.delete(expired_token)
 
             extensions.db.session.commit()
+
+    @app.after_request
+    def log_after_request(response):
+        url = "Not available"
+        remote_addr = "Not available"
+        method = "Not available"
+        if has_request_context():
+            url = request.url
+            remote_addr = request.remote_addr
+            method = request.method
+        current_user = get_current_user()
+        status_code = response.status_code
+        access_log = AccessLog(path=url,
+                               remote_addr=remote_addr,
+                               response_code=status_code,
+                               username=current_user,
+                               method=method)
+        extensions.db.session.add(access_log)
+        extensions.db.session.commit()
+        return response
 
     return app
 

@@ -9,7 +9,7 @@ It implements following features:
 - Database migration (https://flask-migrate.readthedocs.io/en/latest/#)
 - Schedules (https://github.com/furqonat/flask-scheduler)
 - Template application for Patient-Measurement data
-- Template user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
+- user-management as webpage (https://flask-wtf.readthedocs.io/en/1.2.x/)
 - Simple client example to login and retrieve data from RESTFUL service
 
 
@@ -18,8 +18,15 @@ It implements following features:
 ```
 flask_rest_template
 |   .flaskenv             # Environment variables
-|   requirements.txt      # Libraries
+|   requirements.txt      # Librarie requirements
 |
++---migrations            # set-up from flask-migrate
+    |   alembic.ini
+    |   env.py
+    |   README
+    |   script.py.macko
+    +----versions         # Migration scripts
+    
 +---server
     |   config.py         # Flask environment config loader
     |   extensions.py     # Globally accessable extension objects
