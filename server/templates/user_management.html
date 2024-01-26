@@ -30,11 +30,11 @@
         </tr>
         {% for user in users %}
             <tr>
-                <td>{{ user.username }}</td>
+                <td><a href="{{url_for('user_mng.tokens', id=user.id)}}">{{ user.username }}</a></td>
                 <td>*****</td>
                 <td>{% for role in user.roles %}{{role.name}}, {% endfor %}</td>
                 <td class="action-links">
-                    <a href="{{ url_for('user_mng.delete_user', id=user.id) }}">Delete</a>
+                    {% if not current_user.id == user.id %}<a href="{{ url_for('user_mng.delete_user', id=user.id) }}">Delete</a>{%  endif %}
                     <a href="{{ url_for('user_mng.set_password', id=user.id) }}">Reset</a>
                 </td>
             </tr>

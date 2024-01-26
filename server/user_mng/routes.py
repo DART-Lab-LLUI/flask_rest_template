@@ -5,8 +5,9 @@ from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, EqualTo
 
+from server import utils
 from server.extensions import db, login_manager
-from server.models.auth import Role, User
+from server.models.auth import Role, User, RefreshToken
 from server.user_mng import bp
 from server.user_mng.decorator import role_required_web
 
@@ -29,6 +30,13 @@ class NewUserForm(FlaskForm):
     roles = SelectMultipleField('Roles', coerce=int, validators=[InputRequired()])
     submit = SubmitField('Add User')
 
+@bp.context_processor
+def date_processor():
+    def format_date(timestamp: float) -> str:
+        print(timestamp)
+        return utils.format_timestamp(timestamp)
+
+    return dict(format_date=format_date)
 
 @bp.route('/login', methods=['POST', 'GET'])
 def login():
@@ -116,6 +124,26 @@ def logout():
     logout_user()
     flash('You have been logged-out')
     return redirect(url_for('user_mng.login'))
+
+
+@bp.route('/tokens/<int:id>', methods=['GET'])
+@login_required
+@role_required_web("admin")
+def tokens(id):
+    user = User.query.get_or_404(id)
+
+    return render_template('tokens.html', user=user)
+
+
+@bp.route('/token/toggle/<int:user_id>/<int:id>', methods=['GET'])
+@login_required
+@role_required_web("admin")
+def token_toggle(user_id, id):
+    token = RefreshToken.query.get_or_404(id)
+    token.blocked = not token.blocked
+    db.session.commit()
+
+    return redirect(url_for('user_mng.tokens', id=user_id))
 
 
 # This function is needed for flask-login to retrieve a user after login

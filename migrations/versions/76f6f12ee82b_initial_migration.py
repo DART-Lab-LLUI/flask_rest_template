@@ -66,11 +66,21 @@ def upgrade():
     bulk_roles = [{"id": 1, "name": "admin"}, {"id": 2, "name": "user"}]
     op.bulk_insert(role_table, bulk_roles)
 
+    # admin user
     bulk_users = [{"id": 1, "username": "admin", "password_hash": generate_password_hash("123456")}]
     op.bulk_insert(user_table, bulk_users)
 
     bulk_user_roles = [{"id": 1, "role_id": 1, "user_id": 1}]
     op.bulk_insert(user_role_table, bulk_user_roles)
+
+    # client user
+    bulk_users = [{"id": 2, "username": "client", "password_hash": generate_password_hash("123456")}]
+    op.bulk_insert(user_table, bulk_users)
+
+    bulk_user_roles = [{"id": 2, "role_id": 2, "user_id": 2}]
+    op.bulk_insert(user_role_table, bulk_user_roles)
+
+
 
 
 def downgrade():

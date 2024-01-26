@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Tokens</h1>
+        <form action="{{ url_for('user_mng.logout') }}" method="get">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li class="flash-message">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <table class="user-management-table">
+        <tr>
+            <th>jti</th>
+            <th>expires</th>
+            <th>Actions</th>
+        </tr>
+        {% for token in user.refresh_tokens %}
+            <tr>
+                <td>{{ token.jti }}</td>
+                <td>{{format_date(token.expire_date)}}</td>
+                <td class="action-links">
+                    <a href="{{ url_for('user_mng.token_toggle', user_id=user.id, id=token.id) }}">{% if token.blocked %} unblock {% else %} block {% endif %}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('user_mng.user_management') }}"><- back</a>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 def parse_timestamp(timestamp_str: str) -> float:
     return datetime.fromisoformat(timestamp_str).timestamp()
 

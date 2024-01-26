@@ -43,7 +43,7 @@ def _prepare_header(kwargs):
 
 
 def login() -> [str, str]:
-    login_data = {"username": "admin", "password": "123456"}
+    login_data = {"username": "client", "password": "123456"}
     response, foo = _send_request(requests.post, "auth/login", json=login_data)
     json_response = response.json()
     return json_response["access_token"], json_response["refresh_token"]
