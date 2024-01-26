@@ -33,7 +33,6 @@ class NewUserForm(FlaskForm):
 @bp.context_processor
 def date_processor():
     def format_date(timestamp: float) -> str:
-        print(timestamp)
         return utils.format_timestamp(timestamp)
 
     return dict(format_date=format_date)

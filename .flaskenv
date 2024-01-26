@@ -10,7 +10,7 @@ SECRET_KEY=superAmazingSecretKey
 JWT_SECRET_KEY=superAmazingJWTSecretKey
 
 # How long an authorization is valid (in minutes)
-JWT_ACCESS_TOKEN_EXPIRES=0.1
+JWT_ACCESS_TOKEN_EXPIRES=0.3
 # How login an refresh is valid (in days)
 JWT_REFRESH_TOKEN_EXPIRES=30
 

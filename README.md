@@ -68,6 +68,11 @@ flask_rest_template
 Install requirements
 
 ```shell
+# create venv
+$ python -m venv venv
+# activate venv
+$ venv\Scripts\activate
+
 # Install libraries
 $ pip install -r requirements.txt
 # Install database

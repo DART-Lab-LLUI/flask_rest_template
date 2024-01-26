@@ -1,3 +1,4 @@
+from flask_restful import fields, reqparse
 from sqlalchemy import event
 
 from server.extensions import db
@@ -9,9 +10,10 @@ class Category(db.Model):
     name = db.Column(db.String(68))
     measures = db.relationship('Measure', backref='category')
 
-    def to_dict(self) -> dict:
-        return {"id": self.id,
-                "name": self.name}
+    @classmethod
+    def get_fields(cls) -> dict:
+        return {"id": fields.Integer,
+                "name": fields.String}
 
 
 class Measure(db.Model):
@@ -30,13 +32,15 @@ class Measure(db.Model):
     def timestamp(self, timestamp_str):
         self._timestamp = parse_timestamp(timestamp_str)
 
-    def to_dict(self) -> dict:
-        return {"id": self.id,
-                "marker": self.marker,
-                "value": self.value,
-                "timestamp": self.timestamp,
-                "appointment_id": self.appointment_id,
-                "category": self.category.to_dict()}
+    @classmethod
+    def get_fields(cls) -> dict:
+        return {"id": fields.Integer,
+                "marker": fields.String,
+                "value": fields.String,
+                "timestamp": fields.String,
+                "appointment_id": fields.Integer,
+                "category": fields.Nested(Category.get_fields())}
+
 
 
 class Appointment(db.Model):
@@ -54,11 +58,14 @@ class Appointment(db.Model):
     def date(self, date_str):
         self._date = parse_timestamp(date_str)
 
-    def to_dict(self) -> dict:
-        return {"id": self.id,
-                "patient_id": self.patient_id,
-                "date": self.date,
-                "measures": [measure.to_dict() for measure in self.measures]}
+    @classmethod
+    def get_fields(cls) -> dict:
+        return {
+            'id': fields.Integer,
+            'patient_id': fields.Integer,
+            'date': fields.String,
+            'measures': fields.List(fields.Nested(Measure.get_fields()))
+        }
 
 
 class Patient(db.Model):
@@ -71,22 +78,38 @@ class Patient(db.Model):
 
     @property
     def birthday(self):
-        return format_timestamp(self._birthday)
+        if self._birthday:
+            return format_timestamp(self._birthday)
+        else:
+            return None
 
     @birthday.setter
     def birthday(self, date_str: str):
-        self._birthday = parse_timestamp(date_str)
+        if not date_str is None:
+            self._birthday = parse_timestamp(date_str)
 
     def __repr__(self):
         return f'<Patient "{self.id}">'
 
-    def to_dict(self) -> dict:
-        return {"id": self.id,
-                "name": self.name,
-                "surname": self.surname,
-                "birthday": self.birthday,
-                "comments": self.comments,
-                "appointments": [appointment.to_dict() for appointment in self.appointments]}
+    @classmethod
+    def get_fields(cls) -> dict:
+        return {
+            'id': fields.Integer,
+            'name': fields.String,
+            'birthday': fields.String,
+            'surname': fields.String,
+            'comments': fields.String,
+            'appointments': fields.List(fields.Nested(Appointment.get_fields()))
+        }
+
+    @classmethod
+    def get_parser(cls):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str)
+        parser.add_argument('birthday', type=str)
+        parser.add_argument('surname', type=str)
+        parser.add_argument('comments', type=str)
+        return parser
 
 
 # generate data on creation of table

@@ -1,4 +1,5 @@
-import time
+import json
+from datetime import datetime
 
 import requests
 
@@ -6,78 +7,87 @@ BASE_URL = "http://localhost:5000/api/"
 BASE_HEADER = {"Content-Type": "application/json"}
 
 
-def jwt_error_handler(response: requests.Response):
-    if response.status_code == 401:
-        pass
-
-
-def _send_request(method, url: str, **kwargs) -> [requests.Response, str]:
-    json = kwargs.get("json")
-
-    header, access_token, refresh_token = _prepare_header(kwargs)
-
-    response = method(BASE_URL + url, headers=header, json=json)
-    print(url)
-    print(header)
-    print(json)
-    print(f"{response.status_code}: {response.json()}")
-    print()
-    if response.status_code == 401 and response.json().get("msg") == "Token has expired":
-        response, access_token = _send_request(requests.get, "auth/", refresh_token=refresh_token)
-        access_token = response.json().get("access_token")
-        kwargs["access_token"] = access_token
-        _send_request(method, url, **kwargs)
-
-    return response, access_token
-
-
-def _prepare_header(kwargs):
-    access_token = kwargs.get("access_token")
-    refresh_token = kwargs.get("refresh_token")
+def _prepare_header(token):
     header = BASE_HEADER.copy()
-    if access_token is not None:
-        header["Authorization"] = f"Bearer {access_token}"
-    elif refresh_token is not None:
-        header["Authorization"] = f"Bearer {refresh_token}"
-    return header, access_token, refresh_token
+    header["Authorization"] = f"Bearer {token}"
+    return header
 
 
 def login() -> [str, str]:
     login_data = {"username": "client", "password": "123456"}
-    response, foo = _send_request(requests.post, "auth/", json=login_data)
-    json_response = response.json()
-    return json_response["access_token"], json_response["refresh_token"]
+    response = requests.post(BASE_URL + "auth/", data=json.dumps(login_data), headers=BASE_HEADER)
+    return response
 
 
-def refresh_login(refresh_token: str) -> str:
-    response = requests.get(
-        'http://localhost:5000/api/auth/',
-        headers={"Authorization": "Bearer " + refresh_token, "Content-Type": "application/json"}
-    )
-    if response.status_code == 200:
-        return response.json()["access_token"]
-    else:
-        return "Logged out"
+def refresh_login(refresh_token: str):
+    response = requests.get(BASE_URL + "auth/", headers=_prepare_header(refresh_token))
+    return response
 
 
-def get_patients(access_token: str, refresh_token: str) -> [dict, str]:
-    response, access_token = _send_request(requests.get, "patient/",
-                                           access_token=access_token,
-                                           refresh_token=refresh_token)
+def get_patients(access_token: str) -> [dict, str]:
+    response = requests.get(BASE_URL + "patient/", headers=_prepare_header(access_token))
+    return response
 
-    return response.json(), access_token
+
+def update_patient(access_token: str, name) -> [dict, str]:
+    data = {"name": name}
+    response = requests.put(BASE_URL + "patient/1", data=json.dumps(data), headers=_prepare_header(access_token))
+    return response
+
+def delete_patient(access_token: str, id) -> [dict, str]:
+    response = requests.delete(BASE_URL + "patient/" + str(id), headers=_prepare_header(access_token))
+    return response
+
+
+def add_patient(access_token: str) -> [dict, str]:
+    date = datetime(1971, 7, 30).isoformat()
+    data = {"name": "Hans", "surname": "Meier", "birthday": date}
+    response = requests.post(BASE_URL + "patient/", data=json.dumps(data), headers=_prepare_header(access_token))
+    return response
 
 
 def logout(refresh_token: str):
-    response = _send_request(requests.delete, "auth/", refresh_token=refresh_token)
+    response = requests.delete(BASE_URL + "auth/", headers=_prepare_header(refresh_token))
+    return response
 
 
 def main():
-    access_token, refresh_token = login()
-    patients, access_token = get_patients(access_token, refresh_token)
-    time.sleep(7)
-    patients, access_token = get_patients(access_token, refresh_token)
-    logout(refresh_token)
+    response = login()
+    access_token = response.json()["access_token"]
+    refresh_token = response.json()["refresh_token"]
+    print(f"login: {response.json()}")
+
+    response = get_patients(access_token)
+    print(f"patients: {response.json()}")
+
+    # time.sleep(18)
+    response = get_patients(access_token)
+    print(f"patients: {response.json()}")
+
+    response = refresh_login(refresh_token)
+    access_token = response.json()["access_token"]
+    print(f"refresh: {response.json()}")
+
+    response = update_patient(access_token, "Harald")
+    print(f"update: {response.json()}")
+
+
+    response = add_patient(access_token)
+
+    patient_id = response.json()['id']
+    print(f"add {patient_id}: {response.json()}")
+
+    response = get_patients(access_token)
+    print(f"patients: {response.json()}")
+
+    response = delete_patient(access_token, patient_id)
+    print(f"delete: {response.json()}")
+
+    response = update_patient(access_token, "Luca")
+    print(f"update: {response.json()}")
+
+    response = logout(refresh_token)
+    print(f"logout: {response.json()}")
 
 
 if __name__ == "__main__":
