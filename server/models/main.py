@@ -1,5 +1,4 @@
 from flask_restful import fields, reqparse
-from sqlalchemy import event
 
 from server.extensions import db
 from server.utils import parse_timestamp, format_timestamp
@@ -42,10 +41,8 @@ class Measure(db.Model):
                 "category": fields.Nested(Category.get_fields())}
 
 
-
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     _date = db.Column(db.Double)
     measures = db.relationship('Measure', backref='appointment')
@@ -110,43 +107,3 @@ class Patient(db.Model):
         parser.add_argument('surname', type=str)
         parser.add_argument('comments', type=str)
         return parser
-
-
-# generate data on creation of table
-@event.listens_for(Category.__table__, 'after_create')
-def create_category(*args, **kwargs):
-    db.session.add(Category(name='HR'))
-    db.session.add(Category(name='Blood Pressure'))
-    db.session.commit()
-
-
-@event.listens_for(Patient.__table__, 'after_create')
-def create_patient(*args, **kwargs):
-    patient = Patient(name='Luca', surname='Nastasi', birthday='11.07.1997', comments="cool Dude")
-    db.session.add(patient)
-    db.session.commit()
-
-
-@event.listens_for(Appointment.__table__, 'after_create')
-def create_appointment(*args, **kwargs):
-    patient = Appointment(date='1.1.2024', patient_id=1)
-    db.session.add(patient)
-    db.session.commit()
-
-
-@event.listens_for(Measure.__table__, 'after_create')
-def create_measure(*args, **kwargs):
-    measure1 = Measure(timestamp="1.1.2024 11:00:00.112",
-                       value=59,
-                       marker="heart",
-                       category_id=1,
-                       appointment_id=1)
-
-    measure2 = Measure(timestamp="1.1.2024 11:00:00.112",
-                       value=61,
-                       marker="heart",
-                       category_id=1,
-                       appointment_id=1)
-    db.session.add(measure1)
-    db.session.add(measure2)
-    db.session.commit()

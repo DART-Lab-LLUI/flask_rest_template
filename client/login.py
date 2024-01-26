@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime
 
 import requests
@@ -60,7 +61,7 @@ def main():
     response = get_patients(access_token)
     print(f"patients: {response.json()}")
 
-    # time.sleep(18)
+    time.sleep(18)
     response = get_patients(access_token)
     print(f"patients: {response.json()}")
 

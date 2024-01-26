@@ -2,7 +2,6 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, fields, marshal_with, reqparse
 
-from server import utils
 from server.auth.decorator import role_required
 from server.extensions import db
 from server.main import api_bp
@@ -61,8 +60,6 @@ class PatientListApi(Resource):
         db.session.add(patient)
         db.session.commit()
         return patient
-
-
 
 
 api_bp.add_resource(PatientApi, '/patient/<user_id>')
