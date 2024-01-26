@@ -48,7 +48,7 @@ def _create_access_token(refresh_token: RefreshToken) -> str:
     return access_token
 
 
-@bp.route('/login', methods=['POST'])
+@bp.route('/', methods=['POST'])
 def login():
     username = str(request.json.get("username", None))
     password = str(request.json.get("password", None))
@@ -62,7 +62,7 @@ def login():
     return jsonify(access_token=access_token, refresh_token=refresh_token)
 
 
-@bp.route("/refresh", methods=["GET"])
+@bp.route("/", methods=["GET"])
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt()
@@ -71,7 +71,7 @@ def refresh():
     return jsonify(access_token=access_token)
 
 
-@bp.route("/logout", methods=["DELETE"])
+@bp.route("/", methods=["DELETE"])
 @jwt_required(refresh=True)
 def logout():
     jti = get_jwt()["jti"]

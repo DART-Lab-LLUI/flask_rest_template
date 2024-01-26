@@ -23,7 +23,7 @@ def _send_request(method, url: str, **kwargs) -> [requests.Response, str]:
     print(f"{response.status_code}: {response.json()}")
     print()
     if response.status_code == 401 and response.json().get("msg") == "Token has expired":
-        response, access_token = _send_request(requests.get, "/auth/refresh", refresh_token=refresh_token)
+        response, access_token = _send_request(requests.get, "/auth/", refresh_token=refresh_token)
         access_token = response.json().get("access_token")
         kwargs["access_token"] = access_token
         _send_request(method, url, **kwargs)
@@ -44,14 +44,14 @@ def _prepare_header(kwargs):
 
 def login() -> [str, str]:
     login_data = {"username": "client", "password": "123456"}
-    response, foo = _send_request(requests.post, "auth/login", json=login_data)
+    response, foo = _send_request(requests.post, "auth/", json=login_data)
     json_response = response.json()
     return json_response["access_token"], json_response["refresh_token"]
 
 
 def refresh_login(refresh_token: str) -> str:
     response = requests.get(
-        'http://localhost:5000/api/auth/refresh',
+        'http://localhost:5000/api/auth/',
         headers={"Authorization": "Bearer " + refresh_token, "Content-Type": "application/json"}
     )
     if response.status_code == 200:
@@ -69,7 +69,7 @@ def get_patients(access_token: str, refresh_token: str) -> [dict, str]:
 
 
 def logout(refresh_token: str):
-    response = _send_request(requests.delete, "auth/logout", refresh_token=refresh_token)
+    response = _send_request(requests.delete, "auth/", refresh_token=refresh_token)
 
 
 def main():
