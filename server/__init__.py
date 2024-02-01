@@ -62,7 +62,12 @@ def init_access_log(app):
         method = "Not available"
         if has_request_context():
             url = request.url
-            remote_addr = request.remote_addr
+            for key in request.environ.keys():
+                print(f"{key}: {request.environ[key]}")
+            if 'X-Envoy-External-Address' in request.headers:
+                remote_addr = request.headers.get('X-Envoy-External-Address')
+            else:
+                remote_addr = request.remote_addr
             method = request.method
         current_user = get_current_user()
         status_code = response.status_code

@@ -10,6 +10,7 @@
 services:
   server:
     image: flask-rest
+    restart: always
     ports:
       - 5000:8000
     environment:
@@ -17,12 +18,6 @@ services:
       - SECRET_KEY=asdfjbkeasASDre095863-ghasgnASDFer
       - JWT_ACCESS_TOKEN_EXPIRES=0.3
       - JWT_REFRESH_TOKEN_EXPIRES=180
-        # The commented out section below is an example of how to define a PostgreSQL
-        # database that your application can use. `depends_on` tells Docker Compose to
-        # start the database before your application. The `db-data` volume persists the
-      # database data between container restarts. The `db-password` secret is used
-      # to set the database password. You must create `db/password.txt` and add
-      # a password of your choosing to it before running `docker compose up`.
     depends_on:
       db:
         condition: service_healthy
@@ -30,18 +25,17 @@ services:
     image: postgres
     restart: always
     user: postgres
-    #secrets:
-    #  - db-password
- #   volumes:
+  # Define path on host to persist database
+  #  volumes:
   #    - db-data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=example
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
-    #ports:
-     # - 5432:5432
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U test -d example'"]
       interval: 10s
       timeout: 5s
       retries: 5

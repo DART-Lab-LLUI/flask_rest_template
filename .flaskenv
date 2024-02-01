@@ -2,8 +2,9 @@
 FLASK_APP=server
 
 # change for production
-FLASK_ENV=development
-FLASK_DEBUG=1
+#FLASK_ENV=development
+#FLASK_DEBUG=1
+#PROPAGATE_EXCEPTIONS=1
 
 # Define Secrets unique to your application (best to generate each)
 SECRET_KEY=superAmazingSecretKey
