@@ -108,7 +108,7 @@ flask_rest_template
           __init__.py
 ```
 
-## Usage
+## Local Usage
 
 Install requirements
 
@@ -127,8 +127,28 @@ $ flask db upgrade
 Start the application with
 
 ```shell
-flask run
+$ flask run
 ```
+
+## Docker usage
+1 Install docker
+
+2 Download source
+````shell
+$  git clone git@github.com:cereneo-foundation/flask_rest_template.git
+````
+3 Access folder
+````shell
+$ cd flask_rest_template/
+````
+4 Build docker artefact 
+````shell
+$ docker build -t flask-rest .
+````
+5 Run docker composition
+````shell
+$ docker compose up -d
+````
 
 ## General development
 

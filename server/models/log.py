@@ -5,7 +5,7 @@ from server.extensions import db
 
 class AccessLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(36), nullable=False)
+    path = db.Column(db.String(128), nullable=False)
     method = db.Column(db.String(10), nullable=False)
     username = db.Column(db.String(36), nullable=False)
     response_code = db.Column(db.Integer, nullable=False)
