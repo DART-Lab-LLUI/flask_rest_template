@@ -53,28 +53,24 @@ def upgrade():
     )
     # ### end Alembic commands ###
     # #### Main
-    bulk_categories = [{"id": 1, "name": "HR"}, {"id": 2, "name": "Boold Pressure"}]
+    bulk_categories = [{"name": "HR"}, {"name": "Boold Pressure"}]
     op.bulk_insert(category_table, bulk_categories)
 
-    bulk_patient = [{"id": 1,
-                     "name": "Luca",
+    bulk_patient = [{"name": "Luca",
                      "surname": "Nastasi",
                      "_birthday": datetime(1997, 7, 28).timestamp()}]
     op.bulk_insert(patient_table, bulk_patient)
 
-    bulk_appointment = [{"id": 1,
-                         "_date": datetime(2024, 1, 1).timestamp(),
+    bulk_appointment = [{"_date": datetime(2024, 1, 1).timestamp(),
                          "patient_id": 1}]
     op.bulk_insert(appointment_table, bulk_appointment)
 
-    bulk_measure = [{"id": 1,
-                     "_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
+    bulk_measure = [{"_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
                      "category_id": 1,
                      "appointment_id": 1,
                      "Marker": "HR",
                      "value": 59},
-                    {"id": 2,
-                     "_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
+                    {"_timestamp": datetime(2024, 1, 1, 11, 24, 59, 1).timestamp(),
                      "category_id": 1,
                      "appointment_id": 1,
                      "Marker": "HR",

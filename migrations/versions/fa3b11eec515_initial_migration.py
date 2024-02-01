@@ -37,7 +37,7 @@ def upgrade():
     user_table = op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=50), nullable=False),
-    sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.Column('password_hash', sa.String(length=256), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
@@ -63,7 +63,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('jti', sa.String(length=36), nullable=False),
     sa.Column('expire_date', sa.Double(), nullable=False),
-    sa.Column('refresh_token_id', sa.Double(), nullable=False),
+    sa.Column('refresh_token_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['refresh_token_id'], ['refresh_token.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -73,19 +73,19 @@ def upgrade():
     # ### end Alembic commands ###
     # ### Init data
     # #### Auth
-    bulk_roles = [{"id": 1, "name": "admin"}, {"id": 2, "name": "user"}]
+    bulk_roles = [{"name": "admin"}, {"id": 2, "name": "user"}]
     op.bulk_insert(role_table, bulk_roles)
 
-    bulk_users = [{"id": 1, "username": "admin", "password_hash": generate_password_hash("123456")}]
+    bulk_users = [{"username": "admin", "password_hash": generate_password_hash("123456")}]
     op.bulk_insert(user_table, bulk_users)
 
-    bulk_user_roles = [{"id": 1, "role_id": 1, "user_id": 1}]
+    bulk_user_roles = [{"role_id": 1, "user_id": 1}]
     op.bulk_insert(user_role_table, bulk_user_roles)
 
-    bulk_users = [{"id": 2, "username": "client", "password_hash": generate_password_hash("123456")}]
+    bulk_users = [{"username": "client", "password_hash": generate_password_hash("123456")}]
     op.bulk_insert(user_table, bulk_users)
 
-    bulk_user_roles = [{"id": 2, "role_id": 2, "user_id": 2}]
+    bulk_user_roles = [{ "role_id": 2, "user_id": 2}]
     op.bulk_insert(user_role_table, bulk_user_roles)
 
 def downgrade():

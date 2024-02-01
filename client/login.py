@@ -35,6 +35,7 @@ def update_patient(access_token: str, name) -> [dict, str]:
     response = requests.put(BASE_URL + "patient/1", data=json.dumps(data), headers=_prepare_header(access_token))
     return response
 
+
 def delete_patient(access_token: str, id) -> [dict, str]:
     response = requests.delete(BASE_URL + "patient/" + str(id), headers=_prepare_header(access_token))
     return response
@@ -71,11 +72,10 @@ def main():
     response = update_patient(access_token, "Harald")
     print(f"update: {response.json()}")
 
-
     response = add_patient(access_token)
 
     patient_id = response.json()['id']
-    print(f"add {patient_id}: {response.json()}")
+    print(f"add: {response.json()}")
 
     response = get_patients(access_token)
     print(f"patients: {response.json()}")

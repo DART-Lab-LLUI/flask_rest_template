@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_scheduler import Scheduler
 
 import server.extensions as extensions
+from server.config import Config
 from server.models.auth import Role, User, RefreshToken, AccessToken
 from server.models.log import AccessLog
 from server.utils import get_current_user
@@ -17,7 +18,7 @@ def create_app(test_config=None) -> Flask:
 
     # Initialize local configs in environment
     if test_config is None:
-        app.config.from_prefixed_env()
+        app.config.from_object(Config)
     else:
         app.config.from_mapping(test_config)
 
