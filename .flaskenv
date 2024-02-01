@@ -3,19 +3,16 @@ FLASK_APP=server
 
 # change for production
 FLASK_ENV=development
-FLASK_DEBUG=True
+FLASK_DEBUG=1
 
 # Define Secrets unique to your application (best to generate each)
-SECRET_KEY=superAmazingSecretKey
-JWT_SECRET_KEY=superAmazingJWTSecretKey
+FLASK_SECRET_KEY=superAmazingSecretKey
+FLASK_JWT_SECRET_KEY=superAmazingJWTSecretKey
 
 # How long an authorization is valid (in minutes)
-JWT_ACCESS_TOKEN_EXPIRES=0.3
+FLASK_JWT_ACCESS_TOKEN_EXPIRES=0.3
 # How login an refresh is valid (in days)
-JWT_REFRESH_TOKEN_EXPIRES=30
-
-# Standard delay for job schedules (in seconds)
-SCHEDULER_API_INTERVAL=60 # ever minute
+FLASK_JWT_REFRESH_TOKEN_EXPIRES=30
 
 # Database uri
-SQLALCHEMY_DATABASE_URI=sqlite:///app.db
+FLASK_SQLALCHEMY_DATABASE_URI=sqlite:///app.db

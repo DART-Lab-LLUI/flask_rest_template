@@ -7,7 +7,6 @@ from flask_migrate import Migrate
 from flask_scheduler import Scheduler
 
 import server.extensions as extensions
-from server.config import Config
 from server.models.auth import Role, User, RefreshToken, AccessToken
 from server.models.log import AccessLog
 from server.utils import get_current_user
@@ -18,7 +17,7 @@ def create_app(test_config=None) -> Flask:
 
     # Initialize local configs in environment
     if test_config is None:
-        app.config.from_object(Config)
+        app.config.from_prefixed_env()
     else:
         app.config.from_mapping(test_config)
 
@@ -78,7 +77,7 @@ def init_access_log(app):
 
 def init_schedules(app):
     # Schedule delete tokens
-    @extensions.scheduler.runner()
+    @extensions.scheduler.runner(interval=60)
     def clear_expired_tokens():
         with app.app_context():
             expired_tokens = RefreshToken.query.filter(RefreshToken.expire_date < datetime.utcnow().timestamp()).all()

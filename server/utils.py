@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from server.models.auth import User
 from flask import g
 
 
@@ -12,7 +12,8 @@ def get_current_user():
         user = user["loaded_user"]
 
     if not user is None:
-        current_user = user.username
+        if isinstance(user, User):
+            current_user = user.username
 
     return current_user
 

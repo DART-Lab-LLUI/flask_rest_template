@@ -8,3 +8,5 @@ python-dotenv==1.0.1
 Flask-Scheduler==0.0.51
 Flask-Migrate==4.0.5
 flask_restful==0.3.10
+gunicorn==21.2.0
+

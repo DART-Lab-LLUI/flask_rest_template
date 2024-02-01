@@ -121,7 +121,7 @@ $ venv\Scripts\activate
 # Install libraries
 $ pip install -r requirements.txt
 # Install database
-$ flask db ugrade
+$ flask db upgrade
 ```
 
 Start the application with

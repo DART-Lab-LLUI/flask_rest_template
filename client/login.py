@@ -61,7 +61,6 @@ def main():
     response = get_patients(access_token)
     print(f"patients: {response.json()}")
 
-    time.sleep(18)
     response = get_patients(access_token)
     print(f"patients: {response.json()}")
 
